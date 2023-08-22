@@ -1,6 +1,4 @@
-using API.Authentication.Basic;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.OpenApi.Models;
+using API.Services;
 using Persistence.Data;
 using Persistence.DbAccess;
 
@@ -12,42 +10,10 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition(
-        "Basic",
-        new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
-        {
-            Name = "Authorization",
-            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-            Scheme = "Basic",
-            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-            Description = "Basic authorization header",
-        }
-    );
-
-    options.AddSecurityRequirement(
-        new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Basic"
-                    }
-                },
-                new string[] { "Basic " }
-            }
-        }
-    );
-});
+builder.Services.AddSwaggerServices();
 builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
 builder.Services.AddSingleton<IUserData, UserData>();
-builder.Services
-    .AddAuthentication()
-    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
+builder.Services.AddIdentityServices();
 
 var app = builder.Build();
 
