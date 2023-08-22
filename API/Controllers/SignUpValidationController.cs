@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.Authentication.Basic.Attributes;
+using Domain;
+using Microsoft.AspNetCore.Mvc;
 using Persistence.Data;
+using System.Diagnostics;
 
 namespace API.Controllers
 {
@@ -7,12 +10,12 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class SignUpValidationController : ControllerBase
     {
-        [HttpPost("validate")]
-        public async Task<IResult> Validate(string displayName, IUserData userData)
+        [HttpPost, B2CAuthorization]
+        public async Task<IResult> Validate(User user, IUserData userData)
         {
             try
             {
-                var results = await userData.GetUser(displayName);
+                var results = await userData.GetUser(user.DisplayName);
 
                 if (results == null)
                 {
@@ -31,15 +34,14 @@ namespace API.Controllers
                     );
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return Results.BadRequest(
+                return Results.Ok(
                     new
                     {
                         version = "1.0.0",
-                        status = "400",
-                        action = "ValidationError",
-                        userMessage = ex.Message
+                        action = "ShowBlockPage",
+                        userMessage = "There was an error processing your request, try again later"
                     }
                 );
             }
