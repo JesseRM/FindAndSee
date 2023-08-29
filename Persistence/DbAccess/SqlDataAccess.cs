@@ -12,6 +12,7 @@ namespace Persistence.DbAccess
         public SqlDataAccess(IConfiguration config)
         {
             _config = config;
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 
         public async Task<IEnumerable<T>> LoadData<T, U>(string sql, U parameters)
