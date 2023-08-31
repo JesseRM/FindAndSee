@@ -2,7 +2,6 @@
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.Data;
-using System.Diagnostics;
 
 namespace API.Controllers
 {

@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.Data;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -62,6 +63,13 @@ namespace API.Controllers
         {
             try
             {
+                Guid userObjectId = Guid.Parse(User.FindFirstValue("objectId"));
+
+                if (userObjectId != find.AuthorObjectId)
+                {
+                    return Results.Problem("Author object Id does not match authenticated user");
+                }
+
                 await findData.InsertFind(find);
 
                 return Results.Ok();

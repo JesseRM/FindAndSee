@@ -5,7 +5,6 @@ using Persistence.DbAccess;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -17,7 +16,6 @@ builder.Services.AddSingleton<IFindData, FindData>();
 builder.Services.AddIdentityServices();
 
 var app = builder.Build();
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
