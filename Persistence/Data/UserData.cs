@@ -12,9 +12,9 @@ namespace Persistence.Data
             _db = db;
         }
 
-        public async Task<User?> GetUser(string displayName)
+        public async Task<User?> GetUserWithDisplayName(string displayName)
         {
-            string sql = "SELECT get_user(@DisplayName)";
+            string sql = "SELECT * FROM get_user_with_displayname(@DisplayName)";
 
             var results = await _db.LoadData<User, dynamic>(sql, new { DisplayName = displayName });
 

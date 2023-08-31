@@ -14,7 +14,7 @@ namespace API.Controllers
         {
             try
             {
-                var results = await userData.GetUser(user.DisplayName);
+                var results = await userData.GetUserWithDisplayName(user.DisplayName);
 
                 if (results == null)
                 {
