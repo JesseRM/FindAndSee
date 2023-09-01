@@ -16,7 +16,7 @@ namespace API.Controllers
             {
                 var results = await userData.GetUserWithDisplayName(user.DisplayName);
 
-                if (results == null)
+                if (results.DisplayName == null)
                 {
                     return Results.Ok(new { version = "1.0.0", action = "continue" });
                 }

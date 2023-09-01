@@ -12,7 +12,7 @@ namespace Persistence.Data
             _db = db;
         }
 
-        public async Task<User?> GetUserWithDisplayName(string displayName)
+        public async Task<User> GetUserWithDisplayName(string displayName)
         {
             string sql = "SELECT * FROM get_user_with_displayname(@DisplayName)";
 
