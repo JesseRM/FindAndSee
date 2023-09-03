@@ -2,6 +2,7 @@
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.Data;
+using System.Text.RegularExpressions;
 
 namespace API.Controllers
 {
@@ -14,6 +15,22 @@ namespace API.Controllers
         {
             try
             {
+                //Only allow English letter, numbers and underscore
+                Regex regex = new Regex(@"^[a-zA-Z0-9_]+$");
+
+                if (!regex.IsMatch(user.DisplayName))
+                {
+                    return Results.BadRequest(
+                        new
+                        {
+                            version = "1.0.0",
+                            status = "400",
+                            action = "ValidationError",
+                            userMessage = "Only letters, numbers and underscore allowed for Display Name"
+                        }
+                    );
+                }
+
                 var results = await userData.GetUserWithDisplayName(user.DisplayName);
 
                 if (results.DisplayName == null)
