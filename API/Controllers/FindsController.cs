@@ -29,7 +29,7 @@ namespace API.Controllers
             {
                 var results = await findData.GetFind(id);
 
-                if (results == null)
+                if (results.Title == null)
                     return Results.NotFound();
 
                 return Results.Ok(results);
@@ -46,9 +46,6 @@ namespace API.Controllers
             try
             {
                 var results = await findData.GetFindsWithTerm(term);
-
-                if (results == null)
-                    return Results.NotFound();
 
                 return Results.Ok(results);
             }
