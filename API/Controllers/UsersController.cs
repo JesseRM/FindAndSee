@@ -1,4 +1,5 @@
 ﻿using API.Authentication.Basic.Attributes;
+using Azure.Core;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -15,16 +16,14 @@ namespace API.Controllers
         [HttpPost("create"), B2CAuthorization]
         public async Task<IResult> CreateUser(HttpContext context, IUserData userData)
         {
-            if (!context.Request.Body.CanSeek)
+            context.Request.EnableBuffering();
+            string body;
+            using (
+                var reader = new StreamReader(context.Request.Body, Encoding.UTF8, true, 1024, true)
+            )
             {
-                context.Request.EnableBuffering();
+                body = reader.ReadToEnd();
             }
-
-            context.Request.Body.Position = 0;
-
-            var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
-
-            var body = await reader.ReadToEndAsync().ConfigureAwait(false);
             context.Request.Body.Position = 0;
             Console.WriteLine(body);
             Console.WriteLine("test");
