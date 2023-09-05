@@ -13,16 +13,16 @@ namespace API.Controllers
     public class UsersController : ControllerBase
     {
         [HttpPost("create"), B2CAuthorization]
-        public async Task<IResult> CreateUser(HttpRequest request, IUserData userData)
+        public async Task<IResult> CreateUser(HttpContext context, IUserData userData)
         {
-            if (!request.Body.CanSeek)
+            if (!context.Request.Body.CanSeek)
             {
-                request.EnableBuffering();
+                context.Request.EnableBuffering();
             }
 
-            request.Body.Position = 0;
+            context.Request.Body.Position = 0;
 
-            var reader = new StreamReader(request.Body);
+            var reader = new StreamReader(context.Request.Body);
 
             var body = await reader.ReadToEndAsync().ConfigureAwait(false);
             Console.WriteLine(body);
