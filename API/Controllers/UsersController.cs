@@ -13,6 +13,7 @@ namespace API.Controllers
         [HttpPost("create"), B2CAuthorization]
         public async Task<IResult> CreateUser(UserCreate user, IUserData userData)
         {
+            Console.WriteLine(user);
             try
             {
                 if (user.NewUser == true)
