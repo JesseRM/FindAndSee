@@ -14,15 +14,11 @@ namespace API.Controllers
         [HttpPost("create"), B2CAuthorization]
         public async Task<IResult> CreateUser(UserCreate user, IUserData userData)
         {
-            using var reader = new StreamReader(HttpContext.Request.Body);
+            Request.EnableBuffering();
 
-            // You shouldn't need this line anymore.
-            // reader.BaseStream.Seek(0, SeekOrigin.Begin);
-
-            // You now have the body string raw
+            Request.Body.Position = 0;
+            using var reader = new StreamReader(Request.Body);
             var body = await reader.ReadToEndAsync();
-
-            // As well as a bound model
 
             Console.WriteLine(body);
             try
