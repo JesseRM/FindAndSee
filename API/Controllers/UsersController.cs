@@ -13,11 +13,7 @@ namespace API.Controllers
     public class UsersController : ControllerBase
     {
         [HttpPost("create"), B2CAuthorization]
-        public async Task<IResult> CreateUser(
-            HttpRequest request,
-            UserCreate user,
-            IUserData userData
-        )
+        public async Task<IResult> CreateUser(HttpRequest request, IUserData userData)
         {
             if (!request.Body.CanSeek)
             {
@@ -31,24 +27,24 @@ namespace API.Controllers
             var body = await reader.ReadToEndAsync().ConfigureAwait(false);
             Console.WriteLine(body);
             Console.WriteLine("test");
-            try
-            {
-                if (user.NewUser == true)
-                {
-                    await userData.CreateUser(user);
-                }
-            }
-            catch (Exception)
-            {
-                return Results.Ok(
-                    new
-                    {
-                        version = "1.0.0",
-                        action = "ShowBlockPage",
-                        userMessage = "There was an error processing your request, try again later"
-                    }
-                );
-            }
+            /* try
+             {
+                 if (user.NewUser == true)
+                 {
+                     await userData.CreateUser(user);
+                 }
+             }
+             catch (Exception)
+             {
+                 return Results.Ok(
+                     new
+                     {
+                         version = "1.0.0",
+                         action = "ShowBlockPage",
+                         userMessage = "There was an error processing your request, try again later"
+                     }
+                 );
+             }*/
 
             return Results.Ok(new { version = "1.0.0", action = "continue" });
         }
