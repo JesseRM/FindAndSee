@@ -22,7 +22,7 @@ namespace API.Controllers
 
             context.Request.Body.Position = 0;
 
-            var reader = new StreamReader(context.Request.Body);
+            var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
 
             var body = await reader.ReadToEndAsync().ConfigureAwait(false);
             Console.WriteLine(body);
