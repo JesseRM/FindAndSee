@@ -15,7 +15,7 @@ namespace API.Controllers
         {
             try
             {
-                if (user.UserIsNew == true)
+                if (user.NewUser == true)
                 {
                     await userData.CreateUser(user);
                 }

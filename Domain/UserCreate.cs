@@ -4,6 +4,6 @@
     {
         public Guid ObjectId { get; set; }
         public string DisplayName { get; set; }
-        public bool UserIsNew { get; set; }
+        public bool NewUser { get; set; }
     }
 }
