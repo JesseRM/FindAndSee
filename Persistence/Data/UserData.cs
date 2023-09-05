@@ -25,7 +25,7 @@ namespace Persistence.Data
         {
             return _db.SaveData(
                 "insert_user",
-                new { object_id = user.ObjectId, display_name = user.DisplayName, }
+                new { objectid = user.ObjectId, displayname = user.DisplayName, }
             );
         }
     }
