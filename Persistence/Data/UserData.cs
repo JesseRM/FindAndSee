@@ -20,5 +20,13 @@ namespace Persistence.Data
 
             return results.FirstOrDefault();
         }
+
+        public Task CreateUser(UserCreate user)
+        {
+            return _db.SaveData(
+                "insert_user",
+                new { object_id = user.ObjectId, display_name = user.DisplayName, }
+            );
+        }
     }
 }
