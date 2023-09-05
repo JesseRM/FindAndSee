@@ -25,6 +25,7 @@ namespace API.Controllers
             var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
 
             var body = await reader.ReadToEndAsync().ConfigureAwait(false);
+            context.Request.Body.Position = 0;
             Console.WriteLine(body);
             Console.WriteLine("test");
             /* try
