@@ -1,7 +1,8 @@
-﻿using Domain;
+﻿using API.Image;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
 using Persistence.Data;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -9,25 +10,12 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class FindsController : ControllerBase
     {
-        [HttpGet("recent")]
-        public async Task<IResult> GetRecentFinds(IFindData findData)
-        {
-            try
-            {
-                return Results.Ok(await findData.GetRecentFinds());
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem(ex.Message);
-            }
-        }
-
         [HttpGet("id/{id}")]
-        public async Task<IResult> GetFind(Guid id, IFindData findData)
+        public async Task<IResult> GetFind(Guid findId, IFindData findData)
         {
             try
             {
-                var results = await findData.GetFind(id);
+                var results = await findData.GetFind(findId);
 
                 if (results.Title == null)
                     return Results.NotFound();
@@ -55,17 +43,65 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IResult> InsertFind(Find find, IFindData findData)
+        [HttpGet("recent")]
+        public async Task<IResult> GetRecentFinds(IFindData findData)
         {
             try
             {
-                Guid userObjectId = Guid.Parse(User.FindFirstValue("objectId"));
+                return Results.Ok(await findData.GetRecentFinds());
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
 
-                if (userObjectId != find.AuthorObjectId)
-                {
-                    return Results.Problem("Author object Id does not match authenticated user");
-                }
+        [HttpGet("liked")]
+        public async Task<IResult> GetLikedFinds(IFindData findData)
+        {
+            try
+            {
+                var userObjectId = Guid.Parse(User.GetObjectId());
+                var results = await findData.GetLikedFinds(userObjectId);
+
+                return Results.Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpGet("user")]
+        public async Task<IResult> GetUserFinds(IFindData findData)
+        {
+            try
+            {
+                var userObjectId = Guid.Parse(User.GetObjectId());
+                var results = await findData.GetUserFinds(userObjectId);
+
+                return Results.Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IResult> InsertFind(
+            Find find,
+            IFindData findData,
+            ImageAccessor imageAccessor
+        )
+        {
+            try
+            {
+                //Upload image to Cloudinary
+                var uploadResults = await imageAccessor.AddPhoto(find.ImageFile);
+                find.ImageUrl = uploadResults.SecureUrl.ToString();
+                find.ImagePubicId = uploadResults.PublicId;
+                find.AuthorObjectId = Guid.Parse(User.GetObjectId());
 
                 await findData.InsertFind(find);
 
@@ -77,7 +113,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("update")]
+        [HttpPut]
         public async Task<IResult> UpdateFind(Find find, IFindData findData)
         {
             try

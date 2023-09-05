@@ -30,13 +30,37 @@ namespace Persistence.Data
             return results;
         }
 
-        public async Task<Find?> GetFind(Guid id)
+        public async Task<Find> GetFind(Guid id)
         {
             string sql = "SELECT * FROM get_find(@FindId)";
 
             var results = await _db.LoadData<Find, dynamic>(sql, new { FindId = id });
 
             return results.FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<Find>> GetLikedFinds(Guid userObjectId)
+        {
+            string sql = "SELECT * FROM get_liked_finds(@UserObjectId)";
+
+            var results = await _db.LoadData<Find, dynamic>(
+                sql,
+                new { UserObjectId = userObjectId }
+            );
+
+            return results;
+        }
+
+        public async Task<IEnumerable<Find>> GetUserFinds(Guid userObjectId)
+        {
+            string sql = "SELECT * FROM get_user_finds(@UserObjectId)";
+
+            var results = await _db.LoadData<Find, dynamic>(
+                sql,
+                new { UserObjectId = userObjectId }
+            );
+
+            return results;
         }
 
         public Task InsertFind(Find find)
@@ -58,6 +82,7 @@ namespace Persistence.Data
 
         public Task UpdateFind(Find find)
         {
+            //TODO: Check if user owns the find and is allowed to perform update
             return _db.SaveData(
                 "update_find",
                 new
@@ -70,9 +95,10 @@ namespace Persistence.Data
             );
         }
 
-        public Task DeleteFind(Guid id)
+        public Task DeleteFind(Guid findId)
         {
-            return _db.SaveData("delete_find", new { fid = id });
+            //TODO: Check if user owns the find and is allowed to perform delete
+            return _db.SaveData("delete_find", new { fid = findId });
         }
     }
 }

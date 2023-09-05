@@ -1,3 +1,4 @@
+using API.Image;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -19,6 +20,7 @@ builder.Services.AddSwaggerServices();
 builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
 builder.Services.AddSingleton<IUserData, UserData>();
 builder.Services.AddSingleton<IFindData, FindData>();
+builder.Services.AddSingleton<IImageAccessor, ImageAccessor>();
 builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
