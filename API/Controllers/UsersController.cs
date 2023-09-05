@@ -3,6 +3,7 @@ using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Persistence.Data;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace API.Controllers
@@ -12,15 +13,24 @@ namespace API.Controllers
     public class UsersController : ControllerBase
     {
         [HttpPost("create"), B2CAuthorization]
-        public async Task<IResult> CreateUser(UserCreate user, IUserData userData)
+        public async Task<IResult> CreateUser(
+            HttpRequest request,
+            UserCreate user,
+            IUserData userData
+        )
         {
-            Request.EnableBuffering();
+            if (!request.Body.CanSeek)
+            {
+                request.EnableBuffering();
+            }
 
-            Request.Body.Position = 0;
-            using var reader = new StreamReader(Request.Body);
-            var body = await reader.ReadToEndAsync();
+            request.Body.Position = 0;
 
+            var reader = new StreamReader(request.Body);
+
+            var body = await reader.ReadToEndAsync().ConfigureAwait(false);
             Console.WriteLine(body);
+            Console.WriteLine("test");
             try
             {
                 if (user.NewUser == true)
