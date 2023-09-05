@@ -1,7 +1,6 @@
 ﻿using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 
-
 namespace API.Image
 {
     public class ImageAccessor : IImageAccessor
@@ -10,7 +9,6 @@ namespace API.Image
 
         public ImageAccessor(IConfiguration config)
         {
-
             _cloudinary = new Cloudinary(config["ASPNETCORE_CLOUDINARY_URL"]);
             _cloudinary.Api.Secure = true;
         }
@@ -23,7 +21,6 @@ namespace API.Image
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
-
                 };
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -46,5 +43,4 @@ namespace API.Image
             return result.Result == "ok" ? result.Result : null;
         }
     }
-}
 }

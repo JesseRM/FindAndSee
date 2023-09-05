@@ -92,7 +92,7 @@ namespace API.Controllers
         public async Task<IResult> InsertFind(
             Find find,
             IFindData findData,
-            ImageAccessor imageAccessor
+            IImageAccessor imageAccessor
         )
         {
             try
@@ -100,7 +100,7 @@ namespace API.Controllers
                 //Upload image to Cloudinary
                 var uploadResults = await imageAccessor.AddPhoto(find.ImageFile);
                 find.ImageUrl = uploadResults.SecureUrl.ToString();
-                find.ImagePubicId = uploadResults.PublicId;
+                find.ImagePublicId = uploadResults.PublicId;
                 find.AuthorObjectId = Guid.Parse(User.GetObjectId());
 
                 await findData.InsertFind(find);

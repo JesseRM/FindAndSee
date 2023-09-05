@@ -7,7 +7,7 @@ namespace Domain
         public Guid FindId { get; set; }
         public string Title { get; set; }
         public string ImageUrl { get; set; }
-        public string ImagePubicId { get; set; }
+        public string ImagePublicId { get; set; }
         public IFormFile ImageFile { get; set; }
         public DateTime DateCreated { get; set; }
         public decimal Longitude { get; set; }
