@@ -40,6 +40,11 @@ namespace API.Controllers
         {
             try
             {
+                if (user.DisplayName == null)
+                {
+                    user.DisplayName = "";
+                }
+
                 //Only allow English letters, numbers and underscore
                 Regex regex = new Regex(@"^(?=.*[a-zA-Z].*)([a-zA-Z0-9_]+)$");
 
