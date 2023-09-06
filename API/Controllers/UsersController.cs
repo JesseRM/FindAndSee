@@ -1,11 +1,7 @@
 ﻿using API.Authentication.Basic.Attributes;
-using Azure.Core;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Persistence.Data;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace API.Controllers
@@ -14,35 +10,33 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        [HttpPost("create"), B2CAuthorization]
-        public async Task<IResult> CreateUser([FromBody] JsonElement json)
+        [HttpPost("create")]
+        public async Task<IResult> CreateUser(UserCreate user, IUserData userData)
         {
-            Console.WriteLine(json.ToString());
-            Console.WriteLine("test");
-            /* try
-             {
-                 if (user.NewUser == true)
-                 {
-                     await userData.CreateUser(user);
-                 }
-             }
-             catch (Exception)
-             {
-                 return Results.Ok(
-                     new
-                     {
-                         version = "1.0.0",
-                         action = "ShowBlockPage",
-                         userMessage = "There was an error processing your request, try again later"
-                     }
-                 );
-             }*/
+            try
+            {
+                if (user.NewUser == true)
+                {
+                    await userData.CreateUser(user);
+                }
+            }
+            catch (Exception)
+            {
+                return Results.Ok(
+                    new
+                    {
+                        version = "1.0.0",
+                        action = "ShowBlockPage",
+                        userMessage = "There was an error processing your request, try again later"
+                    }
+                );
+            }
 
             return Results.Ok(new { version = "1.0.0", action = "continue" });
         }
 
         [HttpPost("SignUpValidation"), B2CAuthorization]
-        public async Task<IResult> Validate(User user, IUserData userData)
+        public async Task<IResult> Validate(UserCreate user, IUserData userData)
         {
             try
             {
