@@ -40,10 +40,7 @@ namespace API.Controllers
         {
             try
             {
-                if (user.DisplayName == null)
-                {
-                    user.DisplayName = "";
-                }
+                user.DisplayName ??= "";
 
                 //Only allow English letters, numbers and underscore
                 Regex regex = new Regex(@"^(?=.*[a-zA-Z].*)([a-zA-Z0-9_]+)$");
@@ -56,7 +53,7 @@ namespace API.Controllers
                             version = "1.0.0",
                             status = "400",
                             action = "ValidationError",
-                            userMessage = "Only letters, numbers and underscore allowed for Display Name"
+                            userMessage = "Display Name must be alphanumeric with at least one letter (underscore allowed)"
                         }
                     );
                 }
