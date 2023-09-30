@@ -1,8 +1,8 @@
-﻿using API.Image;
+﻿using Application.Finds;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
-using Persistence.Data;
 
 namespace API.Controllers
 {
@@ -10,12 +10,13 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class FindsController : ControllerBase
     {
+        [AllowAnonymous]
         [HttpGet("id/{id}")]
-        public async Task<IResult> GetFind(Guid findId, IFindData findData)
+        public async Task<IResult> GetFind(Guid id, IFindData findData)
         {
             try
             {
-                var results = await findData.GetFind(findId);
+                var results = await findData.GetFind(id);
 
                 if (results.Title == null)
                     return Results.NotFound();
@@ -28,6 +29,7 @@ namespace API.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("search/{term}")]
         public async Task<IResult> GetFindsWithTerm(string term, IFindData findData)
         {
@@ -43,6 +45,7 @@ namespace API.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("recent")]
         public async Task<IResult> GetRecentFinds(IFindData findData)
         {
@@ -88,30 +91,30 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IResult> InsertFind(
-            Find find,
-            IFindData findData,
-            IImageAccessor imageAccessor
-        )
-        {
-            try
-            {
-                //Upload image to Cloudinary
-                var uploadResults = await imageAccessor.AddPhoto(find.ImageFile);
-                find.ImageUrl = uploadResults.SecureUrl.ToString();
-                find.ImagePublicId = uploadResults.PublicId;
-                find.AuthorObjectId = Guid.Parse(User.GetObjectId());
-
-                await findData.InsertFind(find);
-
-                return Results.Ok();
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem(ex.Message);
-            }
-        }
+        /* [HttpPost]
+         public async Task<IResult> InsertFind(
+             Find find,
+             IFindData findData,
+             IImageAccessor imageAccessor
+         )
+         {
+             try
+             {
+                 //Upload image to Cloudinary
+                 var uploadResults = await imageAccessor.AddPhoto(find.ImageFile);
+                 find.ImageUrl = uploadResults.SecureUrl.ToString();
+                 find.ImagePublicId = uploadResults.PublicId;
+                 find.AuthorObjectId = Guid.Parse(User.GetObjectId());
+ 
+                 await findData.InsertFind(find);
+ 
+                 return Results.Ok();
+             }
+             catch (Exception ex)
+             {
+                 return Results.Problem(ex.Message);
+             }
+         }*/
 
         [HttpPut]
         public async Task<IResult> UpdateFind(Find find, IFindData findData)
