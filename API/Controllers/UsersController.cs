@@ -1,7 +1,7 @@
 ﻿using API.Authentication.Basic.Attributes;
+using Application.Users;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Persistence.Data;
 using System.Text.RegularExpressions;
 
 namespace API.Controllers

@@ -1,8 +1,10 @@
 using API.Image;
 using API.Services;
+using Application.Core;
+using Application.Finds;
+using Application.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Persistence.Data;
 using Persistence.DbAccess;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,20 @@ builder.Services.AddControllers(options =>
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     options.Filters.Add(new AuthorizeFilter(policy));
 });
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy(
+        "CorsPolicy",
+        policy =>
+        {
+            policy
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .WithOrigins("http://localhost:3000");
+        }
+    );
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -22,6 +38,7 @@ builder.Services.AddSingleton<IUserData, UserData>();
 builder.Services.AddSingleton<IFindData, FindData>();
 builder.Services.AddSingleton<IImageAccessor, ImageAccessor>();
 builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 var app = builder.Build();
 
@@ -31,6 +48,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 
