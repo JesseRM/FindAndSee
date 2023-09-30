@@ -1,6 +1,6 @@
 ﻿using Domain;
 
-namespace Persistence.Data
+namespace Application.Users
 {
     public interface IUserData
     {

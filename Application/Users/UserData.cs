@@ -1,7 +1,7 @@
 ﻿using Domain;
 using Persistence.DbAccess;
 
-namespace Persistence.Data
+namespace Application.Users
 {
     public class UserData : IUserData
     {
