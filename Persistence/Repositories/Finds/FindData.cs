@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Dapper;
+using Domain;
 using Persistence.DbAccess;
 
 namespace Application.Finds
@@ -39,19 +40,31 @@ namespace Application.Finds
             return results;
         }
 
-        public async Task<FindDetailsDto> GetFind(Guid id)
+        public async Task<Find> GetFind(Guid id)
         {
             string sql =
-                @"SELECT f.find_id, title, date_created, longitude, latitude, description, author_object_id, 
-                i.url AS image_url, i.public_id AS image_public_id, u.display_name
+                @"SELECT f.*, i.*, u.*
                 FROM finds f 
                 JOIN images i ON f.find_id = i.find_id
                 JOIN users u ON u.object_id = author_object_id
                 WHERE f.find_id = @FindId";
 
-            var results = await _db.LoadData<FindDetailsDto, dynamic>(sql, new { FindId = id });
+            using var connection = await _db.GetConnection();
 
-            return results.FirstOrDefault();
+            var result = await connection.QueryAsync<Find, Image, User, Find>(
+                sql,
+                (find, image, user) =>
+                {
+                    find.Image = image;
+                    find.User = user;
+
+                    return find;
+                },
+                new { FindId = id },
+                splitOn: "image_id, object_id"
+            );
+
+            return result.FirstOrDefault();
         }
 
         public async Task<IEnumerable<FindBasicDto>> GetLikedFinds(Guid userObjectId)
@@ -87,12 +100,12 @@ namespace Application.Finds
             return results;
         }
 
-        public Task InsertFind(Find find)
+        public Task InsertFind(FindCreateDto find)
         {
             string sql =
-                @"INSERT INTO finds (title, image_url, date_created, longitude, latitude, 
+                @"INSERT INTO finds (title, date_created, longitude, latitude,
                                      description, author_object_Id, is_approved, rejected)
-	            VALUES (@title, @image_url, @date_created, @longitude, @latitude, @description, 
+                VALUES (@title, @date_created, @longitude, @latitude, @description,
                         @author_object_id, false, false)";
 
             return _db.SaveData(
@@ -100,7 +113,6 @@ namespace Application.Finds
                 new
                 {
                     title = find.Title,
-                    image_url = find.ImageUrl,
                     date_created = find.DateCreated,
                     longitude = find.Longitude,
                     latitude = find.Latitude,

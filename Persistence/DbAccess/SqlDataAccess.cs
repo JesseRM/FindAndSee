@@ -32,5 +32,12 @@ namespace Persistence.DbAccess
 
             await connection.ExecuteAsync(sql, parameters, commandType: CommandType.Text);
         }
+
+        public async Task<NpgsqlConnection> GetConnection()
+        {
+            return await NpgsqlDataSource
+                .Create(_config["ASPNETCORE_DB_CONNECTION_STRING"])
+                .OpenConnectionAsync();
+        }
     }
 }

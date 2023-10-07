@@ -1,4 +1,6 @@
-﻿using Application.Finds;
+﻿using API.Image;
+using Application.Finds;
+using Application.Images;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -91,30 +93,37 @@ namespace API.Controllers
             }
         }
 
-        /* [HttpPost]
-         public async Task<IResult> InsertFind(
-             Find find,
-             IFindData findData,
-             IImageAccessor imageAccessor
-         )
-         {
-             try
-             {
-                 //Upload image to Cloudinary
-                 var uploadResults = await imageAccessor.AddPhoto(find.ImageFile);
-                 find.ImageUrl = uploadResults.SecureUrl.ToString();
-                 find.ImagePublicId = uploadResults.PublicId;
-                 find.AuthorObjectId = Guid.Parse(User.GetObjectId());
- 
-                 await findData.InsertFind(find);
- 
-                 return Results.Ok();
-             }
-             catch (Exception ex)
-             {
-                 return Results.Problem(ex.Message);
-             }
-         }*/
+        [HttpPost]
+        public async Task<IResult> InsertFind(
+            FindCreateDto find,
+            IFindData findData,
+            IImageData imageData,
+            IImageAccessor imageAccessor
+        )
+        {
+            try
+            {
+                Guid newFindId = Guid.NewGuid();
+                find.FindId = newFindId;
+                await findData.InsertFind(find);
+
+                //Upload image to Cloudinary
+                var uploadResults = await imageAccessor.AddPhoto(find.ImageFile);
+                var image = new Domain.Image
+                {
+                    FindId = newFindId,
+                    PublicId = uploadResults.PublicId,
+                    Url = uploadResults.SecureUrl.ToString()
+                };
+                await imageData.InsertImage(image);
+
+                return Results.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
 
         [HttpPut]
         public async Task<IResult> UpdateFind(Find find, IFindData findData)
@@ -132,11 +141,18 @@ namespace API.Controllers
         }
 
         [HttpDelete("delete/id/{id}")]
-        public async Task<IResult> DeleteFind(Guid id, IFindData findData)
+        public async Task<IResult> DeleteFind(
+            Guid findId,
+            IFindData findData,
+            IImageData imageData,
+            ImageAccessor imageAccessor
+        )
         {
             try
             {
-                await findData.DeleteFind(id);
+                await findData.DeleteFind(findId);
+                var image = await imageData.GetImage(findId);
+                await imageAccessor.DeletePhoto(image.PublicId);
 
                 return Results.Ok();
             }

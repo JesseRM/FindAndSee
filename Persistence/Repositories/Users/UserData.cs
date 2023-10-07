@@ -1,7 +1,8 @@
-﻿using Domain;
+﻿using Application.Users;
+using Domain;
 using Persistence.DbAccess;
 
-namespace Application.Users
+namespace Persistance.Repositories.Users
 {
     public class UserData : IUserData
     {

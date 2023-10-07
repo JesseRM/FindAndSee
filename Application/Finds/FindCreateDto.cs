@@ -1,16 +1,16 @@
-﻿namespace Domain
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Application.Finds
 {
-    public class Find
+    public class FindCreateDto
     {
         public Guid FindId { get; set; }
         public string Title { get; set; }
+        public IFormFile ImageFile { get; set; }
         public DateTime DateCreated { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
         public string Description { get; set; }
-        public bool IsApproved { get; set; }
-        public bool IsRejected { get; set; }
-        public Image Image { get; set; }
-        public User User { get; set; }
+        public Guid AuthorObjectId { get; set; }
     }
 }
