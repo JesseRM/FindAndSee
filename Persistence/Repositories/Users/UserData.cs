@@ -28,7 +28,7 @@ namespace Persistance.Repositories.Users
                 @"INSERT INTO users (object_id, display_name)
 	              VALUES (@ObjectId, @DisplayName)";
 
-            await _db.SaveData(sql, new { user.ObjectId, user.DisplayName });
+            await _db.SaveData<dynamic>(sql, new { user.ObjectId, user.DisplayName });
         }
     }
 }
