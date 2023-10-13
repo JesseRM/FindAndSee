@@ -128,6 +128,13 @@ namespace API.Controllers
         [HttpPut]
         public async Task<IResult> UpdateFind(Find find, IFindData findData)
         {
+            var userObjectId = Guid.Parse(User.GetObjectId());
+
+            if (userObjectId != find.User.ObjectId)
+            {
+                return Results.Problem("Not authorized to edit.");
+            }
+
             try
             {
                 await findData.UpdateFind(find);
@@ -140,7 +147,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("delete/id/{id}")]
+        [HttpDelete("delete/id/{findId}")]
         public async Task<IResult> DeleteFind(
             Guid findId,
             IFindData findData,
@@ -148,6 +155,14 @@ namespace API.Controllers
             ImageAccessor imageAccessor
         )
         {
+            var userObjectId = Guid.Parse(User.GetObjectId());
+            var find = await findData.GetFind(findId);
+
+            if (userObjectId != find.User.ObjectId)
+            {
+                return Results.Problem("Not authorized to edit.");
+            }
+
             try
             {
                 await findData.DeleteFind(findId);
