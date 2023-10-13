@@ -12,12 +12,6 @@ using Persistence.Repositories.Images;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers(options =>
-{
-    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-});
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy(
@@ -31,6 +25,13 @@ builder.Services.AddCors(opt =>
                 .WithOrigins("http://localhost:3000");
         }
     );
+});
+
+// Add services to the container.
+builder.Services.AddControllers(options =>
+{
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
