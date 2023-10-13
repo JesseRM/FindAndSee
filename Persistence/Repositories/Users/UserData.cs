@@ -22,13 +22,13 @@ namespace Persistance.Repositories.Users
             return results.FirstOrDefault();
         }
 
-        public Task CreateUser(UserCreate user)
+        public async Task CreateUser(UserCreate user)
         {
             string sql =
                 @"INSERT INTO users (object_id, display_name)
-	                       VALUES (@ObjectId, @DisplayName)";
+	              VALUES (@ObjectId, @DisplayName)";
 
-            return _db.SaveData(sql, new { user.ObjectId, user.DisplayName });
+            await _db.SaveData(sql, new { user.ObjectId, user.DisplayName });
         }
     }
 }
