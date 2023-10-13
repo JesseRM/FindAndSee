@@ -62,6 +62,7 @@ namespace API.Controllers
 
                 if (results.DisplayName == null)
                 {
+                    await userData.CreateUser(user);
                     return Results.Ok(new { version = "1.0.0", action = "continue" });
                 }
                 else
