@@ -28,7 +28,7 @@ namespace Persistance.Repositories.Users
                 @"INSERT INTO users (object_id, display_name)
 	                       VALUES (@ObjectId, @DisplayName)";
 
-            return _db.SaveData(sql, new { user.ObjectId, user.DisplayName, });
+            return _db.SaveData(sql, new { user.ObjectId, user.DisplayName });
         }
     }
 }
