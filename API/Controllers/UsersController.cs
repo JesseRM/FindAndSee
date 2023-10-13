@@ -60,6 +60,8 @@ namespace API.Controllers
                 }
 
                 var results = await userData.GetUserWithDisplayName(user.DisplayName);
+                Console.WriteLine(results);
+                Console.WriteLine(results.ToString());
 
                 if (results.DisplayName == null)
                 {
@@ -82,7 +84,7 @@ namespace API.Controllers
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                Console.Write(e.StackTrace);
+                Console.WriteLine(e.StackTrace);
                 Debug.WriteLine(e.Message);
                 Debug.WriteLine(e.StackTrace);
                 return Results.Ok(
