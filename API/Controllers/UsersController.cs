@@ -2,6 +2,7 @@
 using Application.Users;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace API.Controllers
@@ -78,8 +79,10 @@ namespace API.Controllers
                     );
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
+                Debug.WriteLine(e.Message);
                 return Results.Ok(
                     new
                     {
