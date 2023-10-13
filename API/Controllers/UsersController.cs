@@ -10,9 +10,12 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        [HttpPost("create")]
+        [HttpPost("create"), B2CAuthorization]
         public async Task<IResult> CreateUser(UserCreate user, IUserData userData)
         {
+            Console.WriteLine(user.DisplayName);
+            Console.WriteLine(user.ObjectId);
+            Console.WriteLine(user.NewUser);
             try
             {
                 if (user.NewUser == true)
@@ -62,7 +65,6 @@ namespace API.Controllers
 
                 if (results == null)
                 {
-                    await userData.CreateUser(user);
                     return Results.Ok(new { version = "1.0.0", action = "continue" });
                 }
                 else
