@@ -4,6 +4,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+COPY ["FindAndSee.sln", "FindAndSee.sln"]
 COPY ["API/API.csproj", "API/API.csproj"]
 COPY ["Application/Application.csproj", "Application/Application.csproj"]
 COPY ["Domain/Domain.csproj", "Domain/Domain.csproj"]
