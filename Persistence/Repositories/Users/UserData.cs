@@ -15,7 +15,7 @@ namespace Persistance.Repositories.Users
 
         public async Task<User> GetUserWithDisplayName(string displayName)
         {
-            string sql = "SELECT * FROM get_user_with_displayname(@DisplayName)";
+            string sql = @"SELECT * FROM users WHERE LOWER(display_name) = LOWER(@DisplayName)";
 
             var results = await _db.LoadData<User, dynamic>(sql, new { DisplayName = displayName });
 
@@ -24,10 +24,11 @@ namespace Persistance.Repositories.Users
 
         public Task CreateUser(UserCreate user)
         {
-            return _db.SaveData(
-                "insert_user",
-                new { objectid = user.ObjectId, displayname = user.DisplayName, }
-            );
+            string sql =
+                @"INSERT INTO users (object_id, display_name)
+	                       VALUES (@ObjectId, @DisplayName)";
+
+            return _db.SaveData(sql, new { user.ObjectId, user.DisplayName, });
         }
     }
 }
