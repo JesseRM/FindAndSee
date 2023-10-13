@@ -82,7 +82,9 @@ namespace API.Controllers
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.Write(e.StackTrace);
                 Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
                 return Results.Ok(
                     new
                     {
