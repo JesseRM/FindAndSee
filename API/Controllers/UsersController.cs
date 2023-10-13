@@ -2,7 +2,6 @@
 using Application.Users;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace API.Controllers
@@ -60,10 +59,8 @@ namespace API.Controllers
                 }
 
                 var results = await userData.GetUserWithDisplayName(user.DisplayName);
-                Console.WriteLine(results);
-                Console.WriteLine(results == null);
 
-                if (results.DisplayName == null)
+                if (results == null)
                 {
                     await userData.CreateUser(user);
                     return Results.Ok(new { version = "1.0.0", action = "continue" });
@@ -81,10 +78,8 @@ namespace API.Controllers
                     );
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
                 return Results.Ok(
                     new
                     {
