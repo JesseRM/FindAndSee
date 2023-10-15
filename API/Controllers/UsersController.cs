@@ -11,7 +11,7 @@ namespace API.Controllers
     public class UsersController : ControllerBase
     {
         [HttpPost("create"), B2CAuthorization]
-        public async Task<IResult> CreateUser(UserCreate user, IUserData userData)
+        public async Task<IResult> CreateUser(User user, IUserData userData)
         {
             var registeredUser = await userData.GetUserWithDisplayName(user.DisplayName);
 
@@ -38,7 +38,7 @@ namespace API.Controllers
         }
 
         [HttpPost("SignUpValidation"), B2CAuthorization]
-        public async Task<IResult> Validate(UserCreate user, IUserData userData)
+        public async Task<IResult> Validate(User user, IUserData userData)
         {
             try
             {

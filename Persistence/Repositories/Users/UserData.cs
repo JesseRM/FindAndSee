@@ -22,7 +22,7 @@ namespace Persistance.Repositories.Users
             return results.FirstOrDefault();
         }
 
-        public async Task CreateUser(UserCreate user)
+        public async Task CreateUser(User user)
         {
             string sql =
                 @"INSERT INTO users (object_id, display_name)
