@@ -73,7 +73,7 @@ namespace Application.Finds
                 @"SELECT f.find_id, f.title, f.date_created, i.url AS image_url
                 FROM finds f 
                 JOIN images i ON f.find_id = i.find_id
-                JOIN likes l ON f.author_object_id = l.user_object_id
+                JOIN likes l ON f.find_id = l.find_id
                 WHERE l.user_object_id = @UserObjectId";
 
             var results = await _db.LoadData<FindBasicDto, dynamic>(
