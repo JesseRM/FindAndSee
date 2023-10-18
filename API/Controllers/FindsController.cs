@@ -95,7 +95,7 @@ namespace API.Controllers
 
         [HttpPost]
         public async Task<IResult> InsertFind(
-            FindCreateDto find,
+            [FromForm] FindCreateDto find,
             IFindData findData,
             IImageData imageData,
             IImageAccessor imageAccessor
