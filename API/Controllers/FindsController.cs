@@ -115,6 +115,7 @@ namespace API.Controllers
                     PublicId = uploadResults.PublicId,
                     Url = uploadResults.SecureUrl.ToString()
                 };
+
                 await imageData.InsertImage(image);
 
                 return Results.Ok();

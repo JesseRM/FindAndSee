@@ -104,7 +104,7 @@ namespace Application.Finds
         {
             string sql =
                 @"INSERT INTO finds (title, date_created, longitude, latitude,
-                                     description, author_object_Id, is_approved, rejected)
+                                     description, author_object_Id, is_approved, is_rejected)
                 VALUES (@title, @date_created, @longitude, @latitude, @description,
                         @author_object_id, false, false)";
 
