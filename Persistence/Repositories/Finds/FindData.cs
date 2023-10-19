@@ -103,21 +103,22 @@ namespace Application.Finds
         public Task InsertFind(FindCreateDto find)
         {
             string sql =
-                @"INSERT INTO finds (title, date_created, longitude, latitude,
+                @"INSERT INTO finds (find_id, title, date_created, longitude, latitude,
                                      description, author_object_Id, is_approved, is_rejected)
-                VALUES (@title, @date_created, @longitude, @latitude, @description,
-                        @author_object_id, false, false)";
+                VALUES (@FindId @Title, @DateCreated, @Longitude, @Latitude, @Description,
+                        @AuthorObjectId, false, false)";
 
             return _db.SaveData(
                 sql,
                 new
                 {
-                    title = find.Title,
-                    date_created = find.DateCreated,
-                    longitude = find.Longitude,
-                    latitude = find.Latitude,
-                    description = find.Description,
-                    author_object_id = find.AuthorObjectId,
+                    find.FindId,
+                    find.Title,
+                    find.DateCreated,
+                    find.Longitude,
+                    find.Latitude,
+                    find.Description,
+                    find.AuthorObjectId,
                 }
             );
         }
