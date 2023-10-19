@@ -105,7 +105,7 @@ namespace Application.Finds
             string sql =
                 @"INSERT INTO finds (find_id, title, date_created, longitude, latitude,
                                      description, author_object_Id, is_approved, is_rejected)
-                VALUES (@FindId @Title, @DateCreated, @Longitude, @Latitude, @Description,
+                VALUES (@FindId, @Title, @DateCreated, @Longitude, @Latitude, @Description,
                         @AuthorObjectId, false, false)";
 
             return _db.SaveData(
