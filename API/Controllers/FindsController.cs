@@ -106,6 +106,7 @@ namespace API.Controllers
                 Guid newFindId = Guid.NewGuid();
                 find.FindId = newFindId;
                 find.AuthorObjectId = Guid.Parse(User.GetObjectId());
+                find.DateCreated = DateTime.UtcNow;
                 await findData.InsertFind(find);
 
                 //Upload image to Cloudinary
