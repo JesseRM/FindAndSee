@@ -20,7 +20,7 @@ namespace API.Controllers
             {
                 var results = await findData.GetFind(id);
 
-                if (results.Title == null)
+                if (results == null)
                     return Results.NotFound();
 
                 return Results.Ok(results);
