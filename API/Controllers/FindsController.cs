@@ -93,6 +93,29 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("liked/{findId}")]
+        public async Task<IResult> CheckIfLiked(Guid findId, IFindData findData)
+        {
+            try
+            {
+                var userObjectId = Guid.Parse(User.GetObjectId());
+                var result = await findData.GetLike(userObjectId, findId);
+
+                if (result == null)
+                {
+                    return Results.NotFound();
+                }
+
+                return Results.Ok(true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return Results.Problem("There was a problem processing your request");
+            }
+        }
+
         [HttpPost]
         public async Task<IResult> InsertFind(
             [FromForm] FindCreateDto find,

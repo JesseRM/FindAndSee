@@ -8,6 +8,7 @@ namespace Application.Finds
         Task<Find> GetFind(Guid id);
         Task<IEnumerable<FindBasicDto>> GetFindsWithTerm(string term);
         Task<IEnumerable<FindBasicDto>> GetLikedFinds(Guid userObjectId);
+        Task<Like> GetLike(Guid userObjectId, Guid findId);
         Task<IEnumerable<FindBasicDto>> GetRecentFinds();
         Task<IEnumerable<FindBasicDto>> GetUserFinds(Guid userObjectId);
 

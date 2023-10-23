@@ -84,6 +84,21 @@ namespace Application.Finds
             return results;
         }
 
+        public async Task<Like> GetLike(Guid userObjectId, Guid findId)
+        {
+            string sql =
+                @"SELECT * 
+                           FROM likes
+                           WHERE author_object_id = @UserObjectId AND find_id = @FindId";
+
+            var results = await _db.LoadData<Like, dynamic>(
+                sql,
+                new { UserObjectId = userObjectId, FindId = findId }
+            );
+
+            return results.FirstOrDefault();
+        }
+
         public async Task<IEnumerable<FindBasicDto>> GetUserFinds(Guid userObjectId)
         {
             string sql =
