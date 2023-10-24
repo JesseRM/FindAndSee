@@ -3,12 +3,14 @@ using API.Services;
 using Application.Core;
 using Application.Finds;
 using Application.Images;
+using Application.Likes;
 using Application.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Persistance.Repositories.Users;
 using Persistence.DbAccess;
 using Persistence.Repositories.Images;
+using Persistence.Repositories.Likes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,7 @@ builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
 builder.Services.AddSingleton<IUserData, UserData>();
 builder.Services.AddSingleton<IFindData, FindData>();
 builder.Services.AddSingleton<IImageData, ImageData>();
+builder.Services.AddSingleton<ILikeData, LikeData>();
 builder.Services.AddSingleton<IImageAccessor, ImageAccessor>();
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
