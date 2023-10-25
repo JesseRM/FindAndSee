@@ -18,7 +18,7 @@ namespace Persistence.Repositories.Likes
             string sql =
                 @"SELECT * 
                   FROM likes
-                  WHERE author_object_id = @UserObjectId AND find_id = @FindId";
+                  WHERE user_object_id = @UserObjectId AND find_id = @FindId";
 
             var results = await _db.LoadData<Like, dynamic>(
                 sql,
