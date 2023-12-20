@@ -5,6 +5,7 @@ using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
@@ -39,7 +40,7 @@ namespace API.Controllers
             {
                 var results = await findData.GetFindsWithTerm(term);
 
-                if (results == null)
+                if (results.IsNullOrEmpty())
                     return Results.NotFound();
 
                 return Results.Ok(results);
