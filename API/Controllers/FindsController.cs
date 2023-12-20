@@ -39,6 +39,9 @@ namespace API.Controllers
             {
                 var results = await findData.GetFindsWithTerm(term);
 
+                if (results == null)
+                    return Results.NotFound();
+
                 return Results.Ok(results);
             }
             catch (Exception ex)
