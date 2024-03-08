@@ -12,6 +12,6 @@ namespace Application.Finds
         Task<IEnumerable<FindBasicDto>> GetUserFinds(Guid userObjectId);
 
         Task InsertFind(FindCreateDto find);
-        Task UpdateFind(Find find);
+        Task UpdateFind(FindUpdateDto find);
     }
 }

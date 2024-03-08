@@ -123,24 +123,25 @@ namespace Application.Finds
             );
         }
 
-        public Task UpdateFind(Find find)
+        public Task UpdateFind(FindUpdateDto find)
         {
             string sql =
                 @"UPDATE finds
 	            SET
-		            longitude = @new_longitude,
-		            latitude = @new_latitude,
-		            description = @new_description
-	            WHERE find_id = fid";
+		            longitude = @Longitude,
+		            latitude = @Latitude,
+		            description = @Description
+	            WHERE find_id = @FindId AND author_object_id = @AuthorObjectId";
 
             return _db.SaveData(
                 sql,
                 new
                 {
-                    fid = find.FindId,
-                    new_longitude = find.Longitude,
-                    new_latitude = find.Latitude,
-                    new_description = find.Description,
+                    find.FindId,
+                    find.Longitude,
+                    find.Latitude,
+                    find.Description,
+                    find.AuthorObjectId
                 }
             );
         }

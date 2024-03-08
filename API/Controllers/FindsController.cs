@@ -1,7 +1,6 @@
 ﻿using API.Image;
 using Application.Finds;
 using Application.Images;
-using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
@@ -133,11 +132,11 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<IResult> UpdateFind(Find find, IFindData findData)
+        public async Task<IResult> UpdateFind([FromForm] FindUpdateDto find, IFindData findData)
         {
             var userObjectId = Guid.Parse(User.GetObjectId());
 
-            if (userObjectId != find.User.ObjectId)
+            if (userObjectId != find.AuthorObjectId)
             {
                 return Results.Problem("Not authorized to edit.");
             }
