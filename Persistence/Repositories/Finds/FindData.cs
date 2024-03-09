@@ -128,7 +128,7 @@ namespace Application.Finds
             string sql =
                 @"UPDATE finds
 	            SET
-                    title = @Title
+                    title = @Title,
 		            longitude = @Longitude,
 		            latitude = @Latitude,
 		            description = @Description
