@@ -128,6 +128,7 @@ namespace Application.Finds
             string sql =
                 @"UPDATE finds
 	            SET
+                    title = @Title
 		            longitude = @Longitude,
 		            latitude = @Latitude,
 		            description = @Description
@@ -138,6 +139,7 @@ namespace Application.Finds
                 new
                 {
                     find.FindId,
+                    find.Title,
                     find.Longitude,
                     find.Latitude,
                     find.Description,
