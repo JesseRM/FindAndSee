@@ -143,7 +143,12 @@ namespace API.Controllers
 
             try
             {
-                await findData.UpdateFind(find);
+                int rowsAffected = await findData.UpdateFind(find);
+
+                if (rowsAffected == 0)
+                {
+                    return Results.Problem("There was an issue updating the find");
+                }
 
                 return Results.Ok();
             }

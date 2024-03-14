@@ -123,7 +123,7 @@ namespace Application.Finds
             );
         }
 
-        public Task UpdateFind(FindUpdateDto find)
+        public Task<int> UpdateFind(FindUpdateDto find)
         {
             string sql =
                 @"UPDATE finds

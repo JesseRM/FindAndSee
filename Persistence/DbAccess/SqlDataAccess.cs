@@ -24,13 +24,13 @@ namespace Persistence.DbAccess
             return await connection.QueryAsync<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        public async Task SaveData<T>(string sql, T parameters)
+        public async Task<int> SaveData<T>(string sql, T parameters)
         {
             await using var connection = await NpgsqlDataSource
                 .Create(_config["ASPNETCORE_DB_CONNECTION_STRING"])
                 .OpenConnectionAsync();
 
-            await connection.ExecuteAsync(sql, parameters, commandType: CommandType.Text);
+            return await connection.ExecuteAsync(sql, parameters, commandType: CommandType.Text);
         }
 
         public async Task<NpgsqlConnection> GetConnection()
