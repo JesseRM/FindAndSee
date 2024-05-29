@@ -163,7 +163,7 @@ namespace API.Controllers
             Guid findId,
             IFindData findData,
             IImageData imageData,
-            ImageAccessor imageAccessor
+            IImageAccessor imageAccessor
         )
         {
             var userObjectId = Guid.Parse(User.GetObjectId());
