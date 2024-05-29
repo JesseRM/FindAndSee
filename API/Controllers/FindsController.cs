@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 
 namespace API.Controllers
 {
@@ -185,6 +186,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
                 return Results.Problem(ex.Message);
             }
         }
