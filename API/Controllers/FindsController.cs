@@ -184,6 +184,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Results.Problem(ex.Message);
             }
         }
