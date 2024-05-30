@@ -177,9 +177,9 @@ namespace API.Controllers
 
             try
             {
-                await findData.DeleteFind(findId);
                 var image = await imageData.GetImage(findId);
                 await imageAccessor.DeletePhoto(image.PublicId);
+                await findData.DeleteFind(findId);
 
                 return Results.Ok();
             }
