@@ -151,7 +151,7 @@ namespace API.Controllers
 
                 if (userObjectId != find.User.ObjectId)
                 {
-                    return Results.Unauthorized();
+                    return Results.Forbid();
                 }
             }
             catch (Exception ex)
