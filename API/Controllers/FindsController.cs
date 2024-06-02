@@ -133,18 +133,35 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<IResult> UpdateFind([FromForm] FindUpdateDto find, IFindData findData)
+        public async Task<IResult> UpdateFind(
+            [FromForm] FindUpdateDto findUpdate,
+            IFindData findData
+        )
         {
             var userObjectId = Guid.Parse(User.GetObjectId());
 
-            if (userObjectId != find.AuthorObjectId)
+            try
             {
-                return Results.Problem("Not authorized to edit.");
+                var find = await findData.GetFind(findUpdate.FindId);
+
+                if (find == null)
+                {
+                    return Results.NotFound();
+                }
+
+                if (userObjectId != find.User.ObjectId)
+                {
+                    return Results.Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem("There was a problem identifying the find");
             }
 
             try
             {
-                int rowsAffected = await findData.UpdateFind(find);
+                int rowsAffected = await findData.UpdateFind(findUpdate);
 
                 if (rowsAffected == 0)
                 {
@@ -172,7 +189,7 @@ namespace API.Controllers
 
             if (userObjectId != find.User.ObjectId)
             {
-                return Results.Problem("Not authorized to edit.");
+                return Results.Unauthorized();
             }
 
             try
