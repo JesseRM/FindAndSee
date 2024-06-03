@@ -185,11 +185,24 @@ namespace API.Controllers
         )
         {
             var userObjectId = Guid.Parse(User.GetObjectId());
-            var find = await findData.GetFind(findId);
 
-            if (userObjectId != find.User.ObjectId)
+            try
             {
-                return Results.Unauthorized();
+                var find = await findData.GetFind(findId);
+
+                if (find == null)
+                {
+                    return Results.NotFound();
+                }
+
+                if (userObjectId != find.User.ObjectId)
+                {
+                    return Results.Forbid();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem("There was a problem identifying the find");
             }
 
             try
