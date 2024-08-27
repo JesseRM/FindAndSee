@@ -21,7 +21,7 @@ namespace Persistance.Repositories.Users
 
             using var connection = await _db.GetConnection();
 
-            var result = await connection.QueryAsync(sql, new { DisplayName = displayName });
+            var result = await connection.QueryAsync<User>(sql, new { DisplayName = displayName });
 
             return result.FirstOrDefault();
         }
