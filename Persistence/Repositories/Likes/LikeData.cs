@@ -1,6 +1,8 @@
 ﻿using Application.Likes;
+using Dapper;
 using Domain;
 using Persistence.DbAccess;
+using System.Data;
 
 namespace Persistence.Repositories.Likes
 {
@@ -20,30 +22,48 @@ namespace Persistence.Repositories.Likes
                   FROM likes
                   WHERE user_object_id = @UserObjectId AND find_id = @FindId";
 
-            var results = await _db.LoadData<Like, dynamic>(
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.QueryAsync(
                 sql,
                 new { UserObjectId = userObjectId, FindId = findId }
             );
 
-            return results.FirstOrDefault();
+            return result.FirstOrDefault();
         }
 
-        public Task InsertLike(Guid userObjectId, Guid findId)
+        public async Task<int> InsertLike(Guid userObjectId, Guid findId)
         {
             string sql =
                 @"INSERT INTO likes (user_object_id, find_id)
                            VALUES(@UserObjectId, @FindId)";
 
-            return _db.SaveData(sql, new { UserObjectId = userObjectId, FindId = findId });
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.ExecuteAsync(
+                sql,
+                new { UserObjectId = userObjectId, FindId = findId },
+                commandType: CommandType.Text
+            );
+
+            return result;
         }
 
-        public Task DeleteLike(Guid userObjectId, Guid findId)
+        public async Task<int> DeleteLike(Guid userObjectId, Guid findId)
         {
             string sql =
                 @"DELETE FROM likes
                   WHERE user_object_id = @UserObjectId AND find_id = @FindId";
 
-            return _db.SaveData(sql, new { UserObjectId = userObjectId, FindId = findId });
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.ExecuteAsync(
+                sql,
+                new { UserObjectId = userObjectId, FindId = findId },
+                commandType: CommandType.Text
+            );
+
+            return result;
         }
     }
 }

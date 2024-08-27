@@ -1,6 +1,8 @@
 ﻿using Application.Images;
+using Dapper;
 using Domain;
 using Persistence.DbAccess;
+using System.Data;
 
 namespace Persistence.Repositories.Images
 {
@@ -20,35 +22,50 @@ namespace Persistence.Repositories.Images
                            FROM images
                            WHERE find_id = @FindId";
 
-            var results = await _db.LoadData<Image, dynamic>(sql, new { FindId = findId });
+            using var connection = await _db.GetConnection();
 
-            return results.FirstOrDefault();
+            var result = await connection.QueryAsync<Image>(sql, new { FindId = findId });
+
+            return result.FirstOrDefault();
         }
 
-        public Task InsertImage(Image image)
+        public async Task<int> InsertImage(Image image)
         {
             string sql =
                 @"INSERT INTO images (find_id, public_id, url)
                            VALUES (@FindId, @PublicId, @Url)";
 
-            return _db.SaveData(
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.ExecuteAsync(
                 sql,
                 new
                 {
-                    FindId = image.FindId,
-                    PublicId = image.PublicId,
-                    Url = image.Url
-                }
+                    image.FindId,
+                    image.PublicId,
+                    image.Url
+                },
+                commandType: CommandType.Text
             );
+
+            return result;
         }
 
-        public Task DeleteImage(Guid findId)
+        public async Task<int> DeleteImage(Guid findId)
         {
             string sql =
                 @"DELETE FROM images
 	            WHERE find_id = @FindId";
 
-            return _db.SaveData(sql, new { FindId = findId });
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.ExecuteAsync(
+                sql,
+                new { FindId = findId },
+                commandType: CommandType.Text
+            );
+
+            return result;
         }
     }
 }

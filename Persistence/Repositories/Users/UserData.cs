@@ -1,6 +1,8 @@
 ﻿using Application.Users;
+using Dapper;
 using Domain;
 using Persistence.DbAccess;
+using System.Data;
 
 namespace Persistance.Repositories.Users
 {
@@ -17,18 +19,28 @@ namespace Persistance.Repositories.Users
         {
             string sql = @"SELECT * FROM users WHERE LOWER(display_name) = LOWER(@DisplayName)";
 
-            var results = await _db.LoadData<User, dynamic>(sql, new { DisplayName = displayName });
+            using var connection = await _db.GetConnection();
 
-            return results.FirstOrDefault();
+            var result = await connection.QueryAsync(sql, new { DisplayName = displayName });
+
+            return result.FirstOrDefault();
         }
 
-        public async Task CreateUser(User user)
+        public async Task<int> CreateUser(User user)
         {
             string sql =
                 @"INSERT INTO users (object_id, display_name)
 	              VALUES (@ObjectId, @DisplayName)";
 
-            await _db.SaveData<dynamic>(sql, new { user.ObjectId, user.DisplayName });
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.ExecuteAsync(
+                sql,
+                new { user.ObjectId, user.DisplayName },
+                commandType: CommandType.Text
+            );
+
+            return result;
         }
     }
 }

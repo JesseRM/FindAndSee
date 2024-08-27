@@ -1,4 +1,5 @@
 ﻿using API.Image;
+using Application.Core;
 using Application.Finds;
 using Application.Images;
 using Microsoft.AspNetCore.Authorization;
@@ -32,16 +33,18 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpGet("search/{term}")]
-        public async Task<IResult> GetFindsWithTerm(string term, IFindData findData)
+        public async Task<IResult> GetFindsWithTerm(string term, IFindData findData, IMapper mapper)
         {
             try
             {
-                var results = await findData.GetFindsWithTerm(term);
+                var finds = await findData.GetFindsWithTerm(term);
 
-                if (!results.Any())
+                if (!finds.Any())
                     return Results.NotFound();
 
-                return Results.Ok(results);
+                var findBasicDtos = mapper.FindToFindBasicDto(finds);
+
+                return Results.Ok(findBasicDtos);
             }
             catch (Exception ex)
             {
@@ -51,11 +54,14 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpGet("recent")]
-        public async Task<IResult> GetRecentFinds(IFindData findData)
+        public async Task<IResult> GetRecentFinds(IFindData findData, IMapper mapper)
         {
             try
             {
-                return Results.Ok(await findData.GetRecentFinds());
+                var finds = await findData.GetRecentFinds();
+                var findBasicDtos = mapper.FindToFindBasicDto(finds);
+
+                return Results.Ok(findBasicDtos);
             }
             catch (Exception ex)
             {
@@ -64,14 +70,15 @@ namespace API.Controllers
         }
 
         [HttpGet("liked")]
-        public async Task<IResult> GetLikedFinds(IFindData findData)
+        public async Task<IResult> GetLikedFinds(IFindData findData, IMapper mapper)
         {
             try
             {
                 var userObjectId = Guid.Parse(User.GetObjectId());
-                var results = await findData.GetLikedFinds(userObjectId);
+                var finds = await findData.GetLikedFinds(userObjectId);
+                var findBasicDtos = mapper.FindToFindBasicDto(finds);
 
-                return Results.Ok(results);
+                return Results.Ok(findBasicDtos);
             }
             catch (Exception ex)
             {
@@ -80,14 +87,15 @@ namespace API.Controllers
         }
 
         [HttpGet("user")]
-        public async Task<IResult> GetUserFinds(IFindData findData)
+        public async Task<IResult> GetUserFinds(IFindData findData, IMapper mapper)
         {
             try
             {
                 var userObjectId = Guid.Parse(User.GetObjectId());
-                var results = await findData.GetUserFinds(userObjectId);
+                var finds = await findData.GetUserFinds(userObjectId);
+                var findBasicDtos = mapper.FindToFindBasicDto(finds);
 
-                return Results.Ok(results);
+                return Results.Ok(findBasicDtos);
             }
             catch (Exception ex)
             {

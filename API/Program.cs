@@ -44,6 +44,7 @@ builder.Services.AddSingleton<IUserData, UserData>();
 builder.Services.AddSingleton<IFindData, FindData>();
 builder.Services.AddSingleton<IImageData, ImageData>();
 builder.Services.AddSingleton<ILikeData, LikeData>();
+builder.Services.AddSingleton<IMapper, Mapper>();
 builder.Services.AddSingleton<IImageAccessor, ImageAccessor>();
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);

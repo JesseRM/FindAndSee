@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Domain;
 using Persistence.DbAccess;
+using System.Data;
 
 namespace Application.Finds
 {
@@ -13,31 +14,58 @@ namespace Application.Finds
             _db = db;
         }
 
-        public async Task<IEnumerable<FindBasicDto>> GetRecentFinds()
+        public async Task<IEnumerable<Find>> GetRecentFinds()
         {
             string sql =
-                @"SELECT f.find_id, f.title, f.date_created, i.url AS image_url
+                @"SELECT f.*, i.*, u.*
                 FROM finds f 
-                JOIN images i ON f.find_id = i.find_id 
-                ORDER BY date_created DESC 
+                JOIN images i ON f.find_id = i.find_id
+                JOIN users u ON u.object_id = author_object_id
+                ORDER BY date_created DESC  
                 LIMIT 10";
 
-            var results = await _db.LoadData<FindBasicDto, dynamic>(sql, new { });
+            using var connection = await _db.GetConnection();
 
-            return results;
+            var result = await connection.QueryAsync<Find, Image, User, Find>(
+                sql,
+                (find, image, user) =>
+                {
+                    find.Image = image;
+                    find.User = user;
+
+                    return find;
+                },
+                splitOn: "image_id, object_id"
+            );
+
+            return result;
         }
 
-        public async Task<IEnumerable<FindBasicDto>> GetFindsWithTerm(string term)
+        public async Task<IEnumerable<Find>> GetFindsWithTerm(string term)
         {
             string sql =
-                @"SELECT f.find_id, f.title, f.date_created, i.url AS image_url
+                @"SELECT f.*, i.*, u.*
                 FROM finds f 
-                JOIN images i ON f.find_id = i.find_id 
+                JOIN images i ON f.find_id = i.find_id
+                JOIN users u ON u.object_id = author_object_id
                 WHERE LOWER(f.title) LIKE '%' || LOWER(@SearchTerm) || '%'";
 
-            var results = await _db.LoadData<FindBasicDto, dynamic>(sql, new { SearchTerm = term });
+            using var connection = await _db.GetConnection();
 
-            return results;
+            var result = await connection.QueryAsync<Find, Image, User, Find>(
+                sql,
+                (find, image, user) =>
+                {
+                    find.Image = image;
+                    find.User = user;
+
+                    return find;
+                },
+                new { SearchTerm = term },
+                splitOn: "image_id, object_id"
+            );
+
+            return result;
         }
 
         public async Task<Find> GetFind(Guid id)
@@ -67,40 +95,62 @@ namespace Application.Finds
             return result.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<FindBasicDto>> GetLikedFinds(Guid userObjectId)
+        public async Task<IEnumerable<Find>> GetLikedFinds(Guid userObjectId)
         {
             string sql =
-                @"SELECT f.find_id, f.title, f.date_created, i.url AS image_url
+                @"SELECT f.*, i.*, u.*
                 FROM finds f 
                 JOIN images i ON f.find_id = i.find_id
+                JOIN users u ON u.object_id = author_object_id
                 JOIN likes l ON f.find_id = l.find_id
                 WHERE l.user_object_id = @UserObjectId";
 
-            var results = await _db.LoadData<FindBasicDto, dynamic>(
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.QueryAsync<Find, Image, User, Find>(
                 sql,
-                new { UserObjectId = userObjectId }
+                (find, image, user) =>
+                {
+                    find.Image = image;
+                    find.User = user;
+
+                    return find;
+                },
+                new { UserObjectId = userObjectId },
+                splitOn: "image_id, object_id"
             );
 
-            return results;
+            return result;
         }
 
-        public async Task<IEnumerable<FindBasicDto>> GetUserFinds(Guid userObjectId)
+        public async Task<IEnumerable<Find>> GetUserFinds(Guid userObjectId)
         {
             string sql =
-                @"SELECT f.find_id, f.title, f.date_created, i.url AS image_url
+                @"SELECT f.*, i.*, u.*
                 FROM finds f 
                 JOIN images i ON f.find_id = i.find_id
+                JOIN users u ON u.object_id = author_object_id
                 WHERE f.author_object_id = @UserObjectId";
 
-            var results = await _db.LoadData<FindBasicDto, dynamic>(
+            using var connection = await _db.GetConnection();
+
+            var result = await connection.QueryAsync<Find, Image, User, Find>(
                 sql,
-                new { UserObjectId = userObjectId }
+                (find, image, user) =>
+                {
+                    find.Image = image;
+                    find.User = user;
+
+                    return find;
+                },
+                new { UserObjectId = userObjectId },
+                splitOn: "image_id, object_id"
             );
 
-            return results;
+            return result;
         }
 
-        public Task InsertFind(FindCreateDto find)
+        public async Task<int> InsertFind(FindCreateDto find)
         {
             string sql =
                 @"INSERT INTO finds (find_id, title, date_created, longitude, latitude,
@@ -108,7 +158,9 @@ namespace Application.Finds
                 VALUES (@FindId, @Title, @DateCreated, @Longitude, @Latitude, @Description,
                         @AuthorObjectId, false, false)";
 
-            return _db.SaveData(
+            using var connection = await _db.GetConnection();
+
+            return await connection.ExecuteAsync(
                 sql,
                 new
                 {
@@ -119,11 +171,12 @@ namespace Application.Finds
                     find.Latitude,
                     find.Description,
                     find.AuthorObjectId,
-                }
+                },
+                commandType: CommandType.Text
             );
         }
 
-        public Task<int> UpdateFind(FindUpdateDto find)
+        public async Task<int> UpdateFind(FindUpdateDto find)
         {
             string sql =
                 @"UPDATE finds
@@ -134,7 +187,9 @@ namespace Application.Finds
 		            description = @Description
 	            WHERE find_id = @FindId AND author_object_id = @AuthorObjectId";
 
-            return _db.SaveData(
+            using var connection = await _db.GetConnection();
+
+            return await connection.ExecuteAsync(
                 sql,
                 new
                 {
@@ -148,13 +203,15 @@ namespace Application.Finds
             );
         }
 
-        public Task DeleteFind(Guid findId)
+        public async Task<int> DeleteFind(Guid findId)
         {
             string sql =
                 @"DELETE FROM finds
 	            WHERE find_id = @fid";
 
-            return _db.SaveData(sql, new { fid = findId });
+            using var connection = await _db.GetConnection();
+
+            return await connection.ExecuteAsync(sql, new { fid = findId });
         }
     }
 }

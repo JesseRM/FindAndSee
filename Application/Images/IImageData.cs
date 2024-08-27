@@ -5,6 +5,6 @@ namespace Application.Images
     public interface IImageData
     {
         Task<Image> GetImage(Guid findId);
-        Task InsertImage(Image image);
+        Task<int> InsertImage(Image image);
     }
 }
