@@ -39,13 +39,13 @@ builder.Services.AddControllers(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerServices();
-builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
-builder.Services.AddSingleton<IUserData, UserData>();
-builder.Services.AddSingleton<IFindData, FindData>();
-builder.Services.AddSingleton<IImageData, ImageData>();
-builder.Services.AddSingleton<ILikeData, LikeData>();
-builder.Services.AddSingleton<IMapper, Mapper>();
-builder.Services.AddSingleton<IImageAccessor, ImageAccessor>();
+builder.Services.AddScoped<ISqlDataAccess, SqlDataAccess>();
+builder.Services.AddScoped<IUserData, UserData>();
+builder.Services.AddScoped<IFindData, FindData>();
+builder.Services.AddScoped<IImageData, ImageData>();
+builder.Services.AddScoped<ILikeData, LikeData>();
+builder.Services.AddScoped<IMapper, Mapper>();
+builder.Services.AddScoped<IImageAccessor, ImageAccessor>();
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
