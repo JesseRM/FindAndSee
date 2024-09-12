@@ -18,12 +18,12 @@ namespace API.Controllers
         {
             try
             {
-                var results = await findData.GetFind(id);
+                var find = await findData.GetFind(id);
 
-                if (results == null)
+                if (find == null)
                     return Results.NotFound();
 
-                return Results.Ok(results);
+                return Results.Ok(find);
             }
             catch (Exception ex)
             {
@@ -117,18 +117,31 @@ namespace API.Controllers
                 find.FindId = newFindId;
                 find.AuthorObjectId = Guid.Parse(User.GetObjectId());
                 find.DateCreated = DateTime.UtcNow;
-                await findData.InsertFind(find);
 
-                //Upload image to Cloudinary
-                var uploadResults = await imageAccessor.AddPhoto(find.ImageFile);
+                var cloudinaryUploadResult = await imageAccessor.AddPhoto(find.ImageFile);
+                if (cloudinaryUploadResult.Error != null)
+                {
+                    return Results.Problem("There was a problem saving the image");
+                }
+
+                int findRowsAffected = await findData.InsertFind(find);
+                if (findRowsAffected != 1)
+                {
+                    return Results.Problem("There was a problem saving the find data");
+                }
+
                 var image = new Domain.Image
                 {
                     FindId = newFindId,
-                    PublicId = uploadResults.PublicId,
-                    Url = uploadResults.SecureUrl.ToString()
+                    PublicId = cloudinaryUploadResult.PublicId,
+                    Url = cloudinaryUploadResult.SecureUrl.ToString()
                 };
-
-                await imageData.InsertImage(image);
+                int imageRowsAffected = await imageData.InsertImage(image);
+                if (imageRowsAffected != 1)
+                {
+                    findData.DeleteFind(find.FindId);
+                    return Results.Problem("There was a problem saving image data");
+                }
 
                 return Results.Ok();
             }
@@ -215,8 +228,12 @@ namespace API.Controllers
             {
                 var image = await imageData.GetImage(findId);
                 await imageAccessor.DeletePhoto(image.PublicId);
-                await findData.DeleteFind(findId);
+                var findRowsAffected = await findData.DeleteFind(findId);
 
+                if (findRowsAffected == 0)
+                {
+                    return Results.Problem("There was a problem deleting the find");
+                }
                 return Results.Ok();
             }
             catch (Exception ex)
